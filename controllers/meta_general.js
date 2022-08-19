@@ -8,6 +8,7 @@ const metaGeneral = async (req, res = response ) =>{
     const {tipoPeticion} = req.body;
     let  sql, result;
     let  productos = [], meta_general = [],msg='',status = false,json = [];
+    let  anio,mes;
 
     //tipoPeticion.forEach(  element => {
     switch( tipoPeticion ){
@@ -35,7 +36,7 @@ const metaGeneral = async (req, res = response ) =>{
                     }
                 }
             }*/
-            sql = 'SELECT descripcion,nombre_corto,codigo FROM appweb.met_producto_agrupacion  order by nombre_corto';
+            sql = 'SELECT descripcion,nombre_corto,codigo FROM demoappweb.met_producto_agrupacion  order by nombre_corto';
                 
             result = await runQuery(sql);
 
@@ -73,7 +74,7 @@ const metaGeneral = async (req, res = response ) =>{
                 //res.status(500).json(result.error);
             }
 
-            sql='SELECT anio,mes,porcentaje_meta,nombre_corto FROM appweb.met_meta_general mg,appweb.met_producto_agrupacion pa WHERE pa.codigo = mg.id_prod_agrupacion AND anio = 2022 order by anio,mes';
+            sql='SELECT anio,mes,porcentaje_meta,nombre_corto FROM demoappweb.met_meta_general mg,appweb.met_producto_agrupacion pa WHERE pa.codigo = mg.id_prod_agrupacion AND anio = 2022 order by anio,mes';
 
             result = await runQuery(sql);
             
@@ -116,9 +117,9 @@ const metaGeneral = async (req, res = response ) =>{
 
         case 'listadoMetasGeneral':
 
-            const anio = ( !req.body.anio )?new Date().getFullYear():req.body.anio; 
+            anio = ( !req.body.anio )?new Date().getFullYear():req.body.anio; 
             
-            sql='SELECT anio,mes,porcentaje_meta,nombre_corto FROM appweb.met_meta_general mg,appweb.met_producto_agrupacion pa WHERE pa.codigo = mg.id_prod_agrupacion AND anio = '+anio+' order by anio,mes';
+            sql='SELECT anio,mes,porcentaje_meta,nombre_corto FROM demoappweb.met_meta_general mg,demoappweb.met_producto_agrupacion pa WHERE pa.codigo = mg.id_prod_agrupacion AND anio = '+anio+' order by anio,mes';
             result = await runQuery(sql);
             
             if( result.status == true){
@@ -139,7 +140,7 @@ const metaGeneral = async (req, res = response ) =>{
                         status: true
                     });
                 }else{
-                    res.json({
+                    res.status(400).json({
                         status: false,
                         msg:'No hay datos para la consulta realizada'
                     });
@@ -153,7 +154,7 @@ const metaGeneral = async (req, res = response ) =>{
 
         case 'listadoProductos':
 
-            sql = 'SELECT descripcion,nombre_corto,codigo FROM appweb.met_producto_agrupacion  order by nombre_corto';
+            sql = 'SELECT descripcion,nombre_corto,codigo FROM demoappweb.met_producto_agrupacion  order by nombre_corto';
             result = await runQuery(sql);
             
             if( result.status == true){
@@ -185,6 +186,55 @@ const metaGeneral = async (req, res = response ) =>{
                 res.status(500).json(result.error);
             }
 
+        break;
+
+        case 'insert':
+
+        let { anio:anioInsert,mes,dataPorcentajes } = req.body.data;
+        cantErrores = 0;
+        errores      = [];
+        
+
+        for await (const data of  dataPorcentajes) {
+        // dataPorcentajes.forEach( async data => {
+            producto         = data.codigo_producto;
+            porcentajeMeta   = data.porcentaje;
+
+           /* sql = `INSERT INTO DEMOAPPWEB.MET_META_GENERAL (USUARIO, FECHA_CREACION, ANIO, MES, PORCENTAJE_META, ID_PROD_AGRUPACION) 
+              VALUES ('1111778805', SYSDATE, '${anioInsert}', '${mes}', '${porcentajeMeta}', '${producto}')`;
+            console.log( sql );*/
+
+            sql = `INSERT INTO DEMOAPPWEB.MET_META_GENERAL
+                VALUES 
+                (
+                :USUARIO,
+                :FECHA_CREACION,
+                :ANIO,
+                :MES,
+                :PORCENTAJE_META,
+                :ID_PROD_AGRUPACION
+                )`;
+            params = ['1111778804',new Date().toLocaleDateString(),anioInsert,mes,porcentajeMeta,producto];   
+
+            result =   await runQuery(sql,params,true);
+
+            console.log( result );
+
+            if( result.status == false){
+                cantErrores ++;
+                errores.push( result.error );
+            }
+        };
+
+        if( cantErrores > 0){
+            res.json( {status:false, errores});
+        }else{
+            res.json( {status:true}); 
+        }
+
+        
+
+        
         break;
     }//fin swicth   
 

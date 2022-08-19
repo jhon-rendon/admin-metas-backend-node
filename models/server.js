@@ -41,6 +41,7 @@ class Server{
     routes(){
 
          this.app.use('/meta-general', require('../routes/meta_general'));
+         this.app.use('/productos',require('../routes/productos'));
        
     }
 

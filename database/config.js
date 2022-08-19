@@ -28,13 +28,22 @@ const dbConnection = async() => {
     }
 }
 
-const runQuery = async ( sql, binds=null, autoCommit=null ) =>{
+const runQuery = async ( sql, params=null, autoCommit=null ) =>{
     
     let connection, resultQuery;
 
+    
+   
     try {
         connection  = await oracledb.getConnection(dbConfig);
-        resultQuery = await connection.execute(sql);
+
+        if( params && autoCommit ){
+          resultQuery   = await connection.execute(sql,binds, { autoCommit: true});
+        }
+        else{
+            resultQuery = await connection.execute(sql);
+        }
+       
         
         return  {
             status : true,
@@ -46,11 +55,11 @@ const runQuery = async ( sql, binds=null, autoCommit=null ) =>{
     }//fin try
     catch (error) {
     
-        console.log('error al ejecutar el sql');
+        console.log('error al ejecutar el sql',error);
         return  {
             status : false,
-            msg    : 'Error al ejecutar el sql',
-            error
+            msg    : 'Error al ejecutar el sql ',
+            error  : ''+error
         }
     
     }//fin catch 
@@ -65,7 +74,7 @@ const runQuery = async ( sql, binds=null, autoCommit=null ) =>{
                 return  {
                     status : false,
                     msg    : 'Error al conectar la BD',
-                    error
+                    error  : ''+error
                 }
                 
             }//fin catch
