@@ -3,6 +3,29 @@ const { response } = require("express");
 const { runQuery } = require('../database/config');
 
 
+const listarMetaGeneral = async ( req, res = response ) => {
+
+    console.log('Listar Meta General');
+
+    res.json({
+        msg:'ok'
+    });
+
+};
+
+const guardarMetaGeneral = async ( req, res = response ) => {
+
+    console.log('Guardar Meta General');
+
+    res.json({
+        msg:'ok'
+    });
+
+};
+
+
+
+
 const metaGeneral = async (req, res = response ) =>{
 
     const {tipoPeticion} = req.body;
@@ -243,5 +266,7 @@ const metaGeneral = async (req, res = response ) =>{
 
 
 module.exports = {
-    metaGeneral
+    metaGeneral,
+    listarMetaGeneral,
+    guardarMetaGeneral
 }

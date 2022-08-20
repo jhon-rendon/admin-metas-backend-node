@@ -42,6 +42,7 @@ class Server{
 
          this.app.use('/meta-general', require('../routes/meta_general'));
          this.app.use('/productos',require('../routes/productos'));
+         this.app.use('/auth',require('../routes/auth'));
        
     }
 
