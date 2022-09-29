@@ -7,9 +7,42 @@ const listarMetaGeneral = async ( req, res = response ) => {
 
     console.log('Listar Meta General');
 
-    res.json({
-        msg:'ok'
-    });
+    let  sql, result;
+    let  meta_general = [];
+
+     anio = ( !req.body.anio )?new Date().getFullYear():req.body.anio; 
+            
+            sql='SELECT anio,mes,porcentaje_meta,nombre_corto FROM demoappweb.met_meta_general mg,demoappweb.met_producto_agrupacion pa WHERE pa.codigo = mg.id_prod_agrupacion AND anio = '+anio+' order by anio,mes';
+            result = await runQuery(sql);
+            
+            if( result.status == true){
+                if( result.resultQuery.rows.length > 0 ){
+            
+                    result.resultQuery.rows.map( metas => {
+
+                        meta_general.push(  {
+                            anio:       metas[0],
+                            mes:        metas[1],
+                            porcentaje: metas[2],
+                            producto:   metas[3]
+                        });
+                    });
+                     
+                    res.json({
+                        meta_general,
+                        status: true
+                    });
+                }else{
+                    res.status(400).json({
+                        status: false,
+                        msg:'No hay datos para la consulta realizada'
+                    });
+                }
+            }else{
+                console.log(result.error);
+                res.status(500).json(result.error);
+            }
+
 
 };
 

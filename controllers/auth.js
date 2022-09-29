@@ -36,7 +36,8 @@ const login = async ( req, res = response ) => {
             const token = await generarJWT( usuario );
             res.json({
                 msg: 'ok',
-                token
+                token,
+                documento:usuario
             })
         }
         else{
@@ -53,6 +54,15 @@ const login = async ( req, res = response ) => {
     
 };
 
+const validarToken = async ( req, res = response ) => {
+
+    res.status(200).json({
+        msg: 'Token Valido',
+        success: true
+    });
+}
+
 module.exports = {
-    login
+    login,
+    validarToken
 }

@@ -13,7 +13,7 @@ router.post('/',metaGeneral);
 
 router.post('/listar',[
   validarJWT,
-  check('anio', 'El año es obligatorio').not().isEmpty(),
+  //check('anio', 'El año es obligatorio').not().isEmpty(),
   validarCampos
 ],listarMetaGeneral);
 

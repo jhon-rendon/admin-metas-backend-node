@@ -28,12 +28,10 @@ const dbConnection = async() => {
     }
 }
 
-const runQuery = async ( sql, params=null, autoCommit=null ) =>{
+const runQuery = async ( sql, params=null, autoCommit=null ) => {
     
     let connection, resultQuery;
 
-    
-   
     try {
         connection  = await oracledb.getConnection(dbConfig);
 

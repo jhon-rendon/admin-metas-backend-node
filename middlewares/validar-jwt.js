@@ -8,6 +8,8 @@ const validarJWT = async( req = request, res = response, next ) => {
 
     const token = req.header('x-token');
 
+    console.log(token);
+
     if ( !token ) {
         return res.status(401).json({
             msg: 'No hay token en la petición'
@@ -36,12 +38,13 @@ const validarJWT = async( req = request, res = response, next ) => {
         
         
         req.usuario = usuario;*/
-        jwt.verify( token, process.env.SECRETORPRIVATEKEY );
+        const { uid } = jwt.verify( token, process.env.SECRETORPRIVATEKEY );
+        console.log(uid);
+
         next();
 
     } catch (error) {
-
-        console.log(error);
+        //console.log('pailas');
         res.status(401).json({
             msg: 'Token no válido'
         })

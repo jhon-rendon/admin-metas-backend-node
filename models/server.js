@@ -1,15 +1,28 @@
 require('dotenv').config();
-const express = require('express');
-const cors    = require('cors');
+const express    = require('express');
+const cors       = require('cors');
+const fileUpload = require('express-fileupload');
 
 const { dbConnection } = require('../database/config');
+const { socketController } = require('../socket/controller');
 
 
 class Server{
 
     constructor(){
-        this.app  = express();
-        this.port = process.env.PORT || 3000;
+
+        this.app    = express();
+        this.port   = process.env.PORT || 3000;
+        this.server = require('http').createServer( this.app );
+        this.io     = require('socket.io')( this.server );
+
+        //Rutas APP
+        this.paths = {
+            metaGeneral: '/meta-general',
+            productos  : '/productos',
+            auth       : '/auth',
+            uploads    : '/uploads'
+        };
 
         //Conexión a la base de datos
         this.conectionBD = this.conectarDB();
@@ -19,6 +32,8 @@ class Server{
 
         //Rutas de mi aplicación
         this.routes();
+
+        //this.sockets();
     }
 
     async conectarDB() {
@@ -35,20 +50,33 @@ class Server{
         
 
         // Directorio Público
-        //this.app.use( express.static('public') );
+        this.app.use( express.static('public') );
+
+        // Fileupload - Carga de archivos
+        this.app.use( fileUpload({
+            useTempFiles      : true,
+            tempFileDir       : '/tmp/',
+            createParentPath  : true
+        }));
     }
 
     routes(){
 
-         this.app.use('/meta-general', require('../routes/meta_general'));
-         this.app.use('/productos',require('../routes/productos'));
-         this.app.use('/auth',require('../routes/auth'));
-       
+         this.app.use(this.paths.metaGeneral, require('../routes/meta_general'));
+         this.app.use(this.paths.productos,require('../routes/productos'));
+         this.app.use(this.paths.auth,require('../routes/auth'));
+         this.app.use(this.paths.uploads,require('../routes/uploads'));
+         
+    }
+
+    sockets(){
+        
+        this.io.on('connection', socketController);
     }
 
     listen(){
             
-        this.app.listen( this.port, () => {
+        this.server.listen( this.port, () => {
             console.log(' Servidor Corriendo en el puerto ',this.port);
         });   
        
