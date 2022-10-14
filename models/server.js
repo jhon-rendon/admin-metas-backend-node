@@ -18,10 +18,11 @@ class Server{
 
         //Rutas APP
         this.paths = {
-            metaGeneral: '/meta-general',
-            productos  : '/productos',
-            auth       : '/auth',
-            uploads    : '/uploads'
+            metaGeneral       : '/meta-general',
+            productos         : '/productos',
+            auth              : '/auth',
+            uploads           : '/uploads',
+            graficas_mobile   : '/graficas-mobile'
         };
 
         //Conexión a la base de datos
@@ -66,7 +67,7 @@ class Server{
          this.app.use(this.paths.productos,require('../routes/productos'));
          this.app.use(this.paths.auth,require('../routes/auth'));
          this.app.use(this.paths.uploads,require('../routes/uploads'));
-         
+         this.app.use(this.paths.graficas_mobile,require('../routes/graficas_mobile'));
     }
 
     sockets(){
