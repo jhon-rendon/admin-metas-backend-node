@@ -77,7 +77,7 @@ class Server{
 
     listen(){
             
-        this.server.listen( this.port, () => {
+        this.server.listen( this.port,'192.168.41.6', () => {
             console.log(' Servidor Corriendo en el puerto ',this.port);
         });   
        
