@@ -11,9 +11,8 @@ try {
 db = {
     user:'system',
     password:'oracle',
-    //connectString:'172.16.30.9:1521',
-    connectString:'(DESCRIPTION=(ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 172.16.30.9)(PORT = 1521)))(CONNECT_DATA=(SID=gamble)))'
-    //connectString:'172.16.30.9:1521/gamble'
+    connectString:''
+    
 }
 
 async function open(sql, binds, autoCommit){
